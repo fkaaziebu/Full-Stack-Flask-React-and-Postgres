@@ -10,6 +10,7 @@ function App() {
   const [description, setDescription] = useState("");
   const [eventsList, setEventsList] = useState([]);
 
+
   const handleChange = (e) => {
     setDescription(e.target.value)
   }
@@ -21,7 +22,17 @@ function App() {
       setEventsList([...eventsList, data.data]);
       setDescription("");
     } catch {
-      console.error(e.message);
+      // console.error(e.message);
+    }
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${baseUrl}/events/${id}`);
+      const updatedList = eventsList.filter(event => event.id !== id)
+      setEventsList(updatedList)
+    } catch {
+      // console.error(err.message)
     }
   }
 
@@ -56,6 +67,7 @@ function App() {
             return (
               <li key={event.id}>
                 {event.description}
+                <button onClick={() => handleDelete(event.id)}>X</button>
                 </li>
             )
           })}
