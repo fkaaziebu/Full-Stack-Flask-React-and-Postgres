@@ -8,29 +8,59 @@ const baseUrl = "http://localhost:5000";
 
 function App() {
   const [description, setDescription] = useState("");
+  const [eventsList, setEventsList] = useState([]);
 
   const handleChange = (e) => {
     setDescription(e.target.value)
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(description)
+    try {
+      const data = await axios.post(`${baseUrl}/events`, {description})
+      setEventsList([...eventsList, data.data]);
+      setDescription("");
+    } catch {
+      console.error(e.message);
+    }
   }
+
+  // Fetching data from the API
+  const fetchEvents = async () => {
+    const data = await axios.get(`${baseUrl}/events`)
+    setEventsList(data.data.events)
+  }
+  // useEffect to call fetchEvents function
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
   return (
     <div className="App">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="description">Description</label>
-        <input
-          onChange={handleChange}
-          type="text"
-          name="description"
-          id="description"
-          value={description}
-        />
-        <button type="submit">Submit</button>
-      </form>    
+      <section>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="description">Description</label>
+          <input
+            onChange={handleChange}
+            type="text"
+            name="description"
+            id="description"
+            value={description}
+          />
+          <button type="submit">Submit</button>
+        </form>    
+      </section>
+      <section>
+        <ul>
+          { eventsList.map(event => {
+            return (
+              <li key={event.id}>
+                {event.description}
+                </li>
+            )
+          })}
+        </ul>
+      </section>
     </div>
   );
 }

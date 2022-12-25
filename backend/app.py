@@ -1,15 +1,19 @@
+import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
-import os
-basedir = os.path.abspath(os.path.dirname(__file__))
 from datetime import datetime
+from flask_cors import CORS
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+CORS(app)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Event Table
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(100), nullable=False)
